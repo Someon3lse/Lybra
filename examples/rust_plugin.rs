@@ -1,3 +1,11 @@
+//   ┓   ┓              
+//   ┃ ┓┏┣┓┏┓┏┓         
+//   ┗┛┗┫┗┛┛ ┗┻
+//      ┛      
+//  Copyright (C) 2026 Someon3lse
+//  This project is under a GPL 3.0 license
+//  https://github.com/Someon3lse/Lybra
+
 use std::os::raw::c_char;
 
 #[repr(C)]
@@ -36,14 +44,14 @@ struct HostAPI {
 pub extern "C" fn pluginMain(api: *const HostAPI) -> i32 {
     let name = b"Rust Plugin\0".as_ptr() as *const c_char;
     let author = b"Rustacean\0".as_ptr() as *const c_char;
-    let description = b"Plugin escrito en Rust\0".as_ptr() as *const c_char;
+    let description = b"Rust example plugin\0".as_ptr() as *const c_char;
 
     let id = b"rust_in_peace".as_ptr() as *const c_char;
 
     let info = PluginInfo {
         name,
         author,
-        version: [2, 1, 0],
+        version: [3, 14, 159],
         description,
         id,
         preference: -1,
@@ -57,12 +65,10 @@ pub extern "C" fn pluginMain(api: *const HostAPI) -> i32 {
         }
 
         ((*api).debug)(
-            b"Rust plugin listo!\0".as_ptr() as *const c_char,
+            b"Rust plugin works!\0".as_ptr() as *const c_char,
             b"Rust Plugin\0".as_ptr() as *const c_char,
         );
     }
 
     0
 }
-
-//Build with: rustc --crate-type cdylib rust_plugin.rs

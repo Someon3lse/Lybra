@@ -1,3 +1,11 @@
+//   ┓   ┓              
+//   ┃ ┓┏┣┓┏┓┏┓         
+//   ┗┛┗┫┗┛┛ ┗┻
+//      ┛      
+//  Copyright (C) 2026 Someon3lse
+//  This project is under a GPL 3.0 license
+//  https://github.com/Someon3lse/Lybra
+
 #include <thread>
 
 #include "httplib.h"
@@ -30,6 +38,7 @@ EXPORT_FN void searchBook(const char* query) {
             for (const auto& j : obj["docs"]) {
                 std::string bookId = j.value("key", "unknown-id");
                 sapi.setBookScraper(bookId.c_str(), pluginId);
+                std::string temp;
                 for (const auto& [key, value] : j.items()) {
                     Metadata metadata;
                     metadata.key = key.c_str();
@@ -42,20 +51,21 @@ EXPORT_FN void searchBook(const char* query) {
                         metadata.tag = BOOL;
                     }
                     else if (value.is_array()) {
-                        std::string arrStr;
                         for (int i = 0; i < value.size(); ++i) {
-                            arrStr += value[i].get<std::string>();
-                            arrStr += SEP;
+                            temp += value[i].get<std::string>();
+                            temp += SEP;
                         }
-                        metadata.value.arr = arrStr.c_str();
+                        metadata.value.arr = temp.c_str();
                         metadata.tag = ARRAY;
                     } else {
-                        metadata.value.str = value.get<std::string>().c_str();
+                        temp = value.get<std::string>();
+                        metadata.value.str = temp.c_str();
                         metadata.tag = STR;
                     }
                     sapi.addMetadata(bookId.c_str(), metadata);
-                    sapi.addDownloadLink(bookId.c_str(), "No download available");
+                    temp.clear();
                 }
+                sapi.addDownloadLink(bookId.c_str(), "No download available", 0x0000); // An example. Plugins should store books & download links for later calling their downloads
             }
         } else {
             auto err = res.error();
@@ -79,7 +89,7 @@ EXPORT_FN int pluginMain(const HostAPI* api) {
     int result = api->pluginInit(&info);
     if (result != 0) return result;
 
-    api->debug("Scraper de ejemplo inicializado correctamente!", info.name);
+    api->debug("Open library scraper sucesfully loaded!", info.name);
 
     return 0;
 }
@@ -91,7 +101,8 @@ EXPORT_FN int giveApi(const ScraperAPI* api) {
     return 0;
 }
 
-EXPORT_FN void downloadBook(const char* id, const char* name) {
-    hapi.warn("Downloading is not functional actually", "Example Scraper");
+EXPORT_FN void downloadBook(const char* id, const unsigned short server) {
+    std::string msg("Downloading is not functional actually for book " + std::string(id) + " at server \"" + std::to_string(server) + "\"");
+    hapi.warn(msg.c_str(), "Example Scraper");
 }
 

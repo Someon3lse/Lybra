@@ -1,3 +1,11 @@
+//   ┓   ┓              
+//   ┃ ┓┏┣┓┏┓┏┓         
+//   ┗┛┗┫┗┛┛ ┗┻
+//      ┛      
+//  Copyright (C) 2026 Someon3lse
+//  This project is under a GPL 3.0 license
+//  https://github.com/Someon3lse/Lybra
+
 #pragma once
 
 #ifdef _WIN32

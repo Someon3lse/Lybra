@@ -1,7 +1,14 @@
+//   ┓   ┓              
+//   ┃ ┓┏┣┓┏┓┏┓         
+//   ┗┛┗┫┗┛┛ ┗┻
+//      ┛      
+//  Copyright (C) 2026 Someon3lse
+//  This project is under a GPL 3.0 license
+//  https://github.com/Someon3lse/Lybra
 #include "tui.hpp"
 
 PageIdle::PageIdle() {
-	renderer = Renderer([] {
+	renderer = Renderer(buttonContainer, [&] {
 	    auto Red {color(Color::Red)};
 	    auto Blue{color(Color::Blue)};
 	    auto Cyan{color(Color::Cyan)};
@@ -50,28 +57,64 @@ PageIdle::PageIdle() {
 	        hbox({text("                          "),
 	            text("▀▀▀▀") | Blue}),
 
+            buttonContainer->Render() | hcenter
+
 	    }) | hcenter | flex;
 	});
 }
 
 PageSearch::PageSearch() {
 	renderer = Renderer(bookList, [&] {
-    return vbox({
-        text("Select book: ") | bold,
-        filler(),
-        bookList->Render() | vscroll_indicator | yframe | flex
-        }) | border;
+        //Refresh results
+        if (resultsChanged) {
+            bookList->DetachAllChildren();
+            std::lock_guard<std::mutex> lock(resultsMutex);
+            for (const auto& [id, book] : books) {
+                const std::string noTitle = "[Unknown title]";
+                const std::string noAuthor = "[Unknown author]";
+                MetadataVariant title = book.metadata.find("title") != book.metadata.end() ? book.metadata.at("title") : noTitle;
+                MetadataVariant author = book.metadata.find("author_name") != book.metadata.end() ? book.metadata.at("author_name") : noAuthor;
+                string titleStr;
+                string authorStr;
+                if(holds_alternative<string>(title)) titleStr = get<string>(title);
+                else titleStr = noTitle;
+
+                if(holds_alternative<vector<string>>(author)) {
+                    vector<string>& authorVec = get<vector<string>>(author);
+                    if (authorVec.size() > 1) authorStr = authorVec.at(0) + " and " + to_string(authorVec.size() - 1) + " more...";
+                    else if (authorVec.size() == 1) authorStr = authorVec.at(0);
+                    else authorStr = noAuthor;
+                }
+
+                if (authorStr == noAuthor && titleStr == noTitle)
+                    continue;
+
+                bookList->Add(Button(
+                titleStr + ", by " + authorStr, [&, id] {
+                    selectedBookId = id;
+                    currentPage = METADATA;
+                    debug(string("Selected book: " + selectedBookId).c_str(), "Lybra");
+                }, btnOpt));
+            }
+
+            resultsChanged = false;
+        }
+        return vbox({
+            text("Select book: ") | bold,
+            filler(),
+            bookList->Render() | vscroll_indicator | yframe | flex
+            }) | border;
     });
 }
 
 void PageSearch::clearBooks() {
-	searchResults.clear();
-	selectedBook.metadata.clear();
-	selectedBook.downloadLinks.clear();
-	selectedBook.scraper_id = "";
+    std::lock_guard<std::mutex> lock(resultsMutex);
+    books.clear();
+    selectedBookId = "";
+    bookList->DetachAllChildren();
 }
 
-void PageSearch::addBook(const string id, const Book book) {
+/* void PageSearch::addBook(const string id, const Book book) {
 	books[id] = book;
 	MetadataVariant title = book.metadata.at("title");
 	MetadataVariant author = book.metadata.at("author_names");
@@ -91,10 +134,15 @@ void PageSearch::addBook(const string id, const Book book) {
     	selectedBook = books[id];
         currentPage = METADATA;
     }, btnOpt));
-}
+} */
 
 PageMetadata::PageMetadata() {
+    book = Book{{},{},""};
 	renderer = Renderer(pageMetadataContainer, [&] {
+        if (book.scraper_id == "" && selectedBookId != "") {
+            std::lock_guard<std::mutex> lock(resultsMutex);
+            setBook(searchResults[selectedBookId]);
+        }
     	return vbox({
         text("Metadata of " + get<string>(book.metadata.at("title"))) | bold,
         filler(),
@@ -106,7 +154,10 @@ PageMetadata::PageMetadata() {
 }
 
 void PageMetadata::setBook(const Book& b) {
+    metadataContainer->DetachAllChildren();
+    downloadContainer->DetachAllChildren();
 	book = b;
+    metadataButtons.clear();
 	metadataTexts.clear();
 	fullInfo.clear();
 	selectedMetadata = 0;
@@ -148,15 +199,25 @@ void PageMetadata::setBook(const Book& b) {
         auto buttonMetadata{Button(metadataTexts[i], [&, i]{
             selectedMetadata = i;
            	modalText = fullInfo[i];
-           	modalVisible = true; // TODO: Add modal
+           	modalVisible = true;
         }, btnOpt)};
         metadataButtons.push_back(buttonMetadata);
+        metadataContainer->Add(buttonMetadata);
     };
+
+
+    downloadLinks.clear();
+    downloadLinks = b.downloadLinks;
+    for (const auto& [server, text] : downloadLinks) {
+        addDownloadLink(server);
+    }
 }
 
-void PageMetadata::addDownloadLink(const string& link) {
-	auto buttonDownload{Button(link, [&, link] {/*Download the book*/})};
+void PageMetadata::addDownloadLink(const unsigned short server) {
+	auto buttonDownload{Button(downloadLinks[server], [&, server] {downloadBook(selectedBookId, server);})};
 	downloadButtons.push_back(buttonDownload);
+
+    downloadContainer->Add(buttonDownload);
 }
 
 MainPage::MainPage() {
@@ -170,12 +231,13 @@ MainPage::MainPage() {
         return e;
 	};
 
-	renderer = Renderer(root, [&] {
+	Component basic = Renderer(root, [&] {
         Elements logs;
 
         for (int i = 1; i <= min<size_t>(maxLogs, logHistory.size()); i++) {
             logs.push_back(formatLog(logHistory[logHistory.size() - i]));
         }
+
         return window(
             text("♎ Lybra") | hcenter | bold,
             vbox({
@@ -195,6 +257,8 @@ MainPage::MainPage() {
             })
         ) | flex;
     });
+
+    renderer = Modal(basic, modal, &modalVisible);
 }
 
 Element MainPage::formatLog(const Log& log) {

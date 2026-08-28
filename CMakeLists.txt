@@ -1,3 +1,11 @@
+#   ┓   ┓              
+#   ┃ ┓┏┣┓┏┓┏┓         
+#   ┗┛┗┫┗┛┛ ┗┻
+#      ┛      
+#  Copyright (C) 2026 Someon3lse
+#  This project is under a GPL 3.0 license
+#  https://github.com/Someon3lse/Lybra
+
 cmake_minimum_required(VERSION 3.18)
 
 project(Lybra_Desktop LANGUAGES C CXX)
@@ -7,6 +15,8 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+
+# set(CMAKE_BUILD_TYPE Debug) Uncomment for Debug
 
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI
@@ -26,9 +36,10 @@ set(HEADERS
  )
 
 set(SOURCES 
-    main.cpp
     pluginmanager.cpp
     tui.cpp
+    
+    main.cpp
     )
 
 add_executable(Lybra_Desktop 
@@ -83,7 +94,7 @@ if(RUSTC_EXE)
                 -o "${RUST_PLUGIN_OUT}"
                 "${RUST_PLUGIN_SRC}"
         DEPENDS "${RUST_PLUGIN_SRC}"
-        COMMENT "Compilando rust_plugin con rustc"
+        COMMENT "Building rust plugin..."
         VERBATIM
     )
 

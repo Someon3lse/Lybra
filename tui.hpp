@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -11,6 +12,7 @@
 
 using namespace ftxui; 
 using namespace std;
+
 
 enum pages {IDLE, SEARCH, METADATA, SETTINGS};
 static int currentPage = IDLE;
@@ -22,6 +24,8 @@ static bool modalVisible;
 static bool showTime = true;
 static int maxLogs = 4;
 
+static std::string selectedBookId{""};
+
 class PageIdle {
 public: 
 	PageIdle();
@@ -29,6 +33,13 @@ public:
 		return renderer;
 	};
 private:
+	Component settingsButton{Button("Settings", []{}, btnOpt)};
+	Component infoButton{Button("About", []{}, btnOpt)};
+	Component closeButton{Button("Exit", []{
+		screenPtr->ExitLoopClosure()();
+	}, btnOpt)};
+	Components buttons{settingsButton, infoButton, closeButton};
+	Component buttonContainer{Container::Horizontal(buttons)};
     Component renderer;
 };
 
@@ -37,11 +48,6 @@ public:
 	PageSearch();
 
 	void clearBooks();
-	void addBook(const string id, const Book book);
-	
-	inline const Book& currentBook() {
-		return selectedBook;
-	}
 
 	inline const Component& page() {
 		return renderer;
@@ -49,11 +55,9 @@ public:
 private:
 	Component renderer;
 
-	map<string, Book> books;
-	Components searchResults;
-	Book selectedBook;
+	map<string, Book>& books{searchResults};
 
-	Component bookList{Container::Vertical(searchResults)};
+	Component bookList{Container::Vertical({})};
 };
 
 class PageMetadata {
@@ -61,7 +65,7 @@ public:
 	PageMetadata();
 
 	void setBook(const Book& b);
-	void addDownloadLink(const string& link);
+	void addDownloadLink(const unsigned short server);
 
 	inline const Component& page() {
 		return renderer;
@@ -72,7 +76,7 @@ private:
 	Book book;
 	vector<string> metadataTexts;
 	vector<string> fullInfo;
-	vector<string> downloadLinks;
+	map<unsigned short, string> downloadLinks;
 	int selectedMetadata = 0;
 	Components metadataButtons;
 	Components downloadButtons;
@@ -83,7 +87,6 @@ private:
 };
 
 // TODO: make PageSettings
-// TODO: Add Modal and Esc = Esc
 
 class MainPage {
 public:
@@ -100,15 +103,27 @@ private:
    	PageMetadata pageMetadata;
 
 	std::string query;
+
+	std::string placeholder;
 	
 	
 	Elements logs;
 
 	Component pagesTabs{Container::Tab({pageIdle.page(), pageSearch.page(), pageMetadata.page()}, &currentPage)};
-	Component inputQuery{Input(&query, "What do you want to read today?")};
-	Component searchButton{Button("Search", [&] () {currentPage = SEARCH;})}; // TODO: Search
+   	Component closeModal{Button("Close", [&]{ modalVisible = false; })};
+	Component inputQuery{Input(&query, &placeholder)};
+	Component searchButton{Button("Search", [&] () {pageSearch.clearBooks(); currentPage = SEARCH; searchBook(query.c_str()); })}; // TODO: Search
 	Component inputContainer{Container::Horizontal({inputQuery, searchButton})};
 	Component root{Container::Vertical({pagesTabs, inputContainer})};
+	Component modal{Renderer(closeModal, [&] {
+        return vbox({
+            text(modalText) | center,
+            separator(),
+            closeModal->Render() | center,
+        }) | border;
+    })};
 
 	Element formatLog(const Log& log);
 };
+
+//FIX: It seems like search results, when changed, don't change search Page... 
