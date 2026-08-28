@@ -44,7 +44,7 @@ EXPORT_FN void searchBook(const char* query) {
                     metadata.key = key.c_str();
                     if (value.is_number_integer())  {
                         metadata.value.num = value.get<int>();
-                        metadata.tag = INT;
+                        metadata.tag = NUM;
                     }
                     else if (value.is_boolean()) {
                         metadata.value.b = value.get<bool>();
