@@ -63,7 +63,7 @@ In your terminal, write `sudo ./Lybra_Desktop` or `Lybra_Desktop` and use it!
 Lybra's dependencies are header-only or are installed in CMakeLists. So, with a C/C++ compiler and inside source code folder, do:
 ```
 mkdir build && cd build
-cmake .. -B build
+cmake ..
 make
 ```
 This will compile Lybra and example plugins
