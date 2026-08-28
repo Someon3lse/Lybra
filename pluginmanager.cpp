@@ -74,8 +74,8 @@ void addMetadata(const char* bookId, const Metadata data) {
     MetadataVariant value;
     switch (data.tag) {
         case STR: value = std::string(data.value.str); break;
-        case INT: value = data.value.num; break;
-        case BOOL: value = data.value.b; break;
+        case NUM: value = data.value.num; break;
+        case BOOLEAN: value = data.value.b; break;
         case ARRAY: {
             std::string str(data.value.arr);
             std::vector<std::string> arr;
