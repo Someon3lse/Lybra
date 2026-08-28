@@ -24,7 +24,7 @@ extern "C" {
 #define SEP_CHAR '\x1F'
 
 typedef enum {
-	STR, NUM, BOOL, ARRAY
+	STR, NUM, BOOLEAN, ARRAY
 } Tag;
 
 typedef struct {
