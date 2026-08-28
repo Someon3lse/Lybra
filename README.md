@@ -79,11 +79,11 @@ Plugin communication and more types of plugins are a work in progress.
 
 ## Dependencies
 
-Lybra uses [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (MIT, Copyright (c) 2019 Arthur Sonzogni)
-Example Scraper uses [Cpp-Httplib](https://github.com/yhirose/cpp-httplib) (MIT, Copyright (c) 2017 yhirose) and [nlohmann/json](https://github.com/nlohmann/json) (MIT, Copyright (c) 2013-2026 Niels Lohmann)
+Lybra uses [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (MIT, Copyright (c) 2019 Arthur Sonzogni)  
+Example Scraper uses [Cpp-Httplib](https://github.com/yhirose/cpp-httplib) (MIT, Copyright (c) 2017 yhirose) and [nlohmann/json](https://github.com/nlohmann/json) (MIT, Copyright (c) 2013-2026 Niels Lohmann)  
 
-All licenses are fully compatible with Lybra's GPL-3.0
-
+All licenses are fully compatible with Lybra's GPL-3.0  
+---
 Do you like Lybra? Please give a star to the project!
 
 ---
