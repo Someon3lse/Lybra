@@ -48,7 +48,7 @@ EXPORT_FN void searchBook(const char* query) {
                     }
                     else if (value.is_boolean()) {
                         metadata.value.b = value.get<bool>();
-                        metadata.tag = BOOL;
+                        metadata.tag = BOOLEAN;
                     }
                     else if (value.is_array()) {
                         for (int i = 0; i < value.size(); ++i) {
