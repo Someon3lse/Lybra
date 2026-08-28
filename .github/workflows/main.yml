@@ -1,0 +1,46 @@
+name: Mirror & Build
+on: push
+
+jobs:
+  build-snapshot:
+    name: Snapshot (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive 
+    
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Cmake and Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Run CMake
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Create snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-${{ matrix.os }}-${{ github.sha }}
+
+          path: |
+            build/Lybra_Desktop
+            build/Lybra_Desktop.exe
+          retention-days: 14
+          
+      - name: Mirror
+        uses: yesolutions/mirror-action@master
+        with:
+            REMOTE: 'https://codeberg.org/Someon3lse/Lybra.git'
+            GIT_USERNAME: Someon3lse
+            GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
