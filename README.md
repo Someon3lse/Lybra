@@ -71,11 +71,12 @@ If you have installed rustc, this will build also rust_plugin
 
 ## Plugin creation
 
-For creating a custom plugin or scraper, just include `plugin_api.h` or `scraper_api.h` in your plugin, and override functions using C types in your code. Plugins should function in al languages with a C binding, like Zig, C, C++, Rust, C#, Python (Cython), etc.
+For creating a custom plugin or scraper, just include `plugin_api.h` or `scraper_api.h` in your plugin, and override functions using C types in your code. Plugins should function in al languages with a C binding, like Zig, C, C++, Rust, C#, Python (Cython), etc.  
 
-Inside plugins, pugins should store HostAPI of pluginMain() and ScraperAPI of giveAPI(). These functions are int for returning errors in complex plugins, like dependencies. Also, plugins must call pluginInit() for being stored. 
+Inside plugins, pugins should store HostAPI of pluginMain() and ScraperAPI of giveAPI(). These functions are int for returning errors in complex plugins, like dependencies. Also, plugins must call pluginInit() for being stored.  
 
-Plugin communication and more types of plugins are a work in progress.
+Plugin communication and more types of plugins are a work in progress.  
+Plugins and scrapers are searched at `./examples/` and `./examples/scrapers/` directories, so, DLLs / SOs should be added there
 
 ## Dependencies
 
