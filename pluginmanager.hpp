@@ -26,9 +26,6 @@
     #define LOAD_LIB(path)       LoadLibraryA(path)
     #define GET_FUNC(lib, name)  GetProcAddress((HMODULE)lib, name)
     #define FREE_LIB(lib)        FreeLibrary((HMODULE)lib)
-    #define WIN32_LEAN_AND_MEAN
-    #define NOMINMAX
-    #define NOGDI
 #else
     #include <dlfcn.h>
     #define LOAD_LIB(path)       dlopen(path, RTLD_LAZY)
