@@ -271,7 +271,7 @@ Element MainPage::formatLog(const Log& log) {
     switch (log.level) {
         case Log::LogLevel::DEBUG: 	logText |= color(Color::Green);      break;
         case Log::LogLevel::WARN:  	logText |= color(Color::Yellow);     break;
-        case Log::LogLevel::ERROR: 	logText |= color(Color::Red);        break;
+        case Log::LogLevel::ERR: 	logText |= color(Color::Red);        break;
         case Log::LogLevel::FATAL: 	logText |= color(Color::Red) | bold; break;
         case Log::LogLevel::APOCALYPSE: logText |= color(Color::Red) | bold | inverted; break;
         default: 					logText |= color(Color::White); break;
