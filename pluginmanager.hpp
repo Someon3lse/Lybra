@@ -65,7 +65,7 @@ struct Log {
         DEBUG,
         LOG,
         WARN,
-        ERROR,
+        ERR,
         FATAL,
         APOCALYPSE
     };
