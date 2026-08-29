@@ -120,6 +120,9 @@ target_include_directories(example_scraper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(example_scraper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/examples/lib/httplib)
 target_include_directories(example_scraper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/examples/lib/nlohmann)
 
+if(WIN32)
+    target_link_libraries(example_scraper PRIVATE ws2_32)
+endif()
 if(MSVC)
     set_property(TARGET example_scraper PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
