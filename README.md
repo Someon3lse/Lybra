@@ -8,7 +8,7 @@ The developer assumes **no responsibility** for any use made by third parties of
 The user assumes full responsibility for their use of the application. It is the sole **responsibility of the user** to ensure that their use complies with applicable laws and respects the copyrights of third parties. The developer does not encourage, support, or facilitate piracy or the illegal use of protected content
 
 > [!TIP]
-> Another thing: you probably won't read or do something with the upper information, but you should know this. If you do something with my app, is **YOUR** problem.  
+> Another thing: you probably won't read or do something with the upper information, but you should know this. If you do something with my app, it's **YOUR** problem.  
 > If you want to use this for piracy, do it, but I'm not responsible. After that... Feel free to use this how you want! 
 > ψ(｀∇´)ψ
 
