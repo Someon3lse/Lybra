@@ -38,8 +38,11 @@ jobs:
             build/Lybra_Desktop
             build/Lybra_Desktop.exe
           retention-days: 14
-          
-      - name: Mirror
+  mirror:
+    needs: build-windows
+    runs-on: ubuntu-latest
+      steps:
+        - name: Mirror
         uses: yesolutions/mirror-action@master
         with:
             REMOTE: 'https://codeberg.org/Someon3lse/Lybra.git'
