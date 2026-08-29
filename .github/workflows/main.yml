@@ -40,10 +40,15 @@ jobs:
           retention-days: 14
   mirror:
     name: Mirror to Codeberg
-    needs: build-windows
+    needs: build-snapshot
     runs-on: ubuntu-latest
-      steps:
-        - name: Mirror
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mirror
         uses: yesolutions/mirror-action@master
         with:
             REMOTE: 'https://codeberg.org/Someon3lse/Lybra.git'
