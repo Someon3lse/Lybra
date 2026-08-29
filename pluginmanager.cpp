@@ -44,7 +44,7 @@ void log(const char* message, const char* from, Log::LogLevel level) {
         case Log::LogLevel::DEBUG: levelStr = "Debug";              break;
         case Log::LogLevel::LOG:   levelStr = "Log";                break;
         case Log::LogLevel::WARN:  levelStr = "Warning";            break;
-        case Log::LogLevel::ERROR: levelStr = "Error";              break;
+        case Log::LogLevel::ERR: levelStr = "Error";              break;
         case Log::LogLevel::FATAL: levelStr = "Fatal error";        break;
         case Log::LogLevel::APOCALYPSE: levelStr = "Apocalypse";    break;
     };
@@ -66,7 +66,7 @@ void log(const char* message, const char* from, Log::LogLevel level) {
 void debug(const char* message, const char* name)       {log(message, name, Log::LogLevel::DEBUG);}
 void print(const char* message, const char* name)       {log(message, name, Log::LogLevel::LOG);}
 void warn(const char* message, const char* name)        {log(message, name, Log::LogLevel::WARN);}
-void error(const char* message, const char* name)       {log(message, name, Log::LogLevel::ERROR);}
+void error(const char* message, const char* name)       {log(message, name, Log::LogLevel::ERR);}
 void fatal(const char* message, const char* name)       {log(message, name, Log::LogLevel::FATAL);}
 void apocalypse(const char* message, const char* name)  {log(message, name, Log::LogLevel::APOCALYPSE);}
 
