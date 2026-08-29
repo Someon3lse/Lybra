@@ -39,6 +39,7 @@ jobs:
             build/Lybra_Desktop.exe
           retention-days: 14
   mirror:
+    name: Mirror to Codeberg
     needs: build-windows
     runs-on: ubuntu-latest
       steps:
